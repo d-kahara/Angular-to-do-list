@@ -1,27 +1,24 @@
 import { Component } from '@angular/core';
+import { Task } from './task.model'
+
 
 @Component({
   selector: 'my-app',
   template: `
   <div class="container">
   <h1>My First Angular 2 App</h1>
-  <div *ngFor="let currentTask of tasks">
-    <h3 >{{ currentTask.description }}</h3>
-      <button (click)="showDetails(currentTask)">Edit</button>
-  </div>
-  <div *ngIf="selectedTask">
-  <h1>Edit Task</h1>
- <div>
-   <label>Enter Task Description:</label>
-   <input [(ngModel)]="selectedTask.description">
+  <pies></pies>
+  <task-list [childTaskList]="masterTaskList"
+  (clickSender)="showDetails($event)">
 
- </div>
- <div>
-   <label>Enter Task ID:</label>
-   <input [(ngModel)]="selectedTask.id">
-   <button (click)="finishedEditing()">Done</button>
- </div>
-</div>
+  </task-list><edit-task [childselectedTask]="selectedTask"
+  (doneClickedSender)="finishedEditing()"></edit-task>
+  <new-task
+  (newTaskSender)="addTask($event)"
+  ></new-task>
+
+
+
 </div>
 
 
@@ -31,12 +28,12 @@ import { Component } from '@angular/core';
 })
 
 export class AppComponent {
-  public tasks: Task[] = [
-    new Task("Create To-Do List app", 0),
-    new Task("Learn Kung Fu", 1),
-    new Task("Learn Python", 2),
-    new Task("learn to swim", 3)
-  ];
+  public masterTaskList: Task[] = [
+      new Task("Create To-Do List app", 0),
+      new Task("Learn Kung Fu", 1),
+      new Task("Learn Python", 2),
+      new Task("learn to swim", 3)
+    ];
   selectedTask: Task = null;
   showDetails(clickedTask: Task) {
     this.selectedTask = clickedTask;
@@ -45,8 +42,7 @@ export class AppComponent {
     this.selectedTask = null;
 
   }
-}
-export class Task {
-  public done: boolean = false;
-  constructor(public description: string, public id: number) { }
+  addTask(newTaskFromChild: Task) {
+    this.masterTaskList.push(newTaskFromChild)
+  }
 }
